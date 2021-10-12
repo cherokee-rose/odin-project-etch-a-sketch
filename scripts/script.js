@@ -1,33 +1,35 @@
-// Constants
-
+// HTML elements
 const gridSideLength = 960;
 const gridContainer = document.getElementById('grid-container');
 const resetBtn = document.getElementById('reset-btn');
+const gridDimensionDisplay = document.getElementById('grid-dimension-display');
 
 gridContainer.style.width = gridSideLength + 'px';
 gridContainer.style.height = gridSideLength + 'px';
 
-// #DEBUG
-console.log('Grid container:');
-console.log(gridContainer);
-console.log('Reset button:');
-console.log(resetBtn);
 
-
-// Variables
-
+// Grid properties
 var currentGrid = null;
+var numberOfRows = 0;
+var numberOfColumns = 0;
+var squareWidth = 0;
+var squareHeight = 0;
 
-var numberOfRows = numberOfColumns = 31;
-var squareWidth = squareHeight = Math.floor(gridSideLength / numberOfRows);
+var baseColor = '';
+var passCount = 0;
+var newR, newG, newB, currentR, currentG, currentB = 0;
+var shadeFactor = 0.1;
 
-// #DEBUG
-console.log(`Square{width = ${squareWidth}, height = ${squareHeight}}`);
+// Sets grid values for the variables above
+setGridProperties(31);
 
 // Draws the default 16x16 grid when the page is loaded
 document.body.onload = () => {
     drawGrid();
-} 
+}
+
+// Adds the click-event handler to the reset button
+resetBtn.addEventListener('click', handlerReset);
 
 // The purpose of the function is to draw a grid
 // either when the page is loaded or when the user pressed the 'Reset' button
@@ -55,6 +57,11 @@ document.body.onload = () => {
             column.style.height = squareHeight + 'px';
             column.style.border = '1px solid lightgray';
 
+            // Add the hover event handler
+            column.addEventListener('pointerover', () => {
+                handlerSquareHovered(column);
+            });
+
             // Add the column to the row
             row.appendChild(column);
         }
@@ -69,24 +76,91 @@ document.body.onload = () => {
 
     // Append the grid to the grid container
     gridContainer.appendChild(currentGrid);
+    // Update the grid-dimension display
+    gridDimensionDisplay.textContent = numberOfRows + 'x' + numberOfColumns;
  }
 
-// Being called when the 'Reset' button is pressed
-function resetButton() {
+// Being called when the 'Reset' button is pressed and performs the following actions:
+//  1. Erases the current grid
+//  2. Promts the user to enter a number of squares per side for the new grid
+//  3. Draws a new grid
+function handlerReset() {
+    // Erase the current grid
+    if (gridContainer.children[0] == currentGrid) {
+        gridContainer.removeChild(currentGrid);
+    } else {
+        alert('You have already reset the grid.');
+        return;
+    }
 
+    squaresPerSide = 0;
+    // Ask the user for a number of squares per side for a new grid
+    while (!(typeof squaresPerSide == 'number' && squaresPerSide >= 16 && squaresPerSide <= 100)) {
+        squaresPerSide = parseInt(prompt('Enter a number of rows per side no less than 16 and more than 100.'));
+    }
+    // Reset the grid properties
+    setGridProperties(squaresPerSide);
+
+    // # DEBUG
+    console.log('Number of squares inputted: ' + squaresPerSide);
+
+    // Draw a new grid
+    drawGrid();
 }
 
 // The grid squares hover-state callback
-function hoveredSquare() {
 
+// When mouse passes through a square 
+// it generates a random RGB value for that squares' color
+// after that each pass through another square adds the random color plus 10% percent of
+// dark to that square and so does another pass through another square
+// until the last 10th square becomes completely black.
+// Then the cycle repeats again.
+
+// So the handler does the following:
+// it verifies how many passes there were, if the number of passes is more than 10,
+// it regenerates the base color and resets the passes counter,
+// then it sets the color's value based on the formula
+// base color(gets regenerated every 10 passes) + 10% of dark * number of passes
+function handlerSquareHovered(targetSquare) {
+    // Verify how many passes there were
+    if (passCount > 10) {
+        // Regenerate the base color 
+        currentR = randomInt(0, 256);
+        currentG = randomInt(0, 256);
+        currentB = randomInt(0, 256);
+        // Reset the pass count
+        passCount = 0;
+    }  
+    
+    // Add shade
+    newR = currentR * (1 - shadeFactor * passCount);
+    newG = currentG * (1 - shadeFactor * passCount);
+    newB = currentB * (1 - shadeFactor * passCount);
+
+    // Set the color
+    targetSquare.style.backgroundColor = 'rgb(' + newR + ',' + newG + ',' + newB + ')';
+
+    // Update the counter
+    passCount++;
 } 
-
 
  // Helps to quickly create a 'div' element 
 function createDiv() {
     return document.createElement('div');
 }
 
+// Helps to set values for all the grid-property variables
+function setGridProperties(numberOfSquares) {
+    numberOfRows = numberOfColumns = numberOfSquares;
+    squareWidth = squareHeight = Math.floor(gridSideLength / numberOfSquares);
+}
+
+// Helps to generate a random integer from between
+// minimum and maximum number both inclusively
+function randomInt(min, max) {
+    return min + Math.floor(Math.random() * max);
+}
 
 
 
