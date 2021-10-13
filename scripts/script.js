@@ -2,7 +2,6 @@
 const gridSideLength = 960;
 const gridContainer = document.getElementById('grid-container');
 const resetBtn = document.getElementById('reset-btn');
-const gridDimensionDisplay = document.getElementById('grid-dimension-display');
 
 gridContainer.style.width = gridSideLength + 'px';
 gridContainer.style.height = gridSideLength + 'px';
@@ -55,7 +54,6 @@ resetBtn.addEventListener('click', handlerReset);
             let column = createDiv();
             column.style.width = squareWidth + 'px';
             column.style.height = squareHeight + 'px';
-            column.style.border = '1px solid lightgray';
 
             // Add the hover event handler
             column.addEventListener('pointerover', () => {
@@ -73,11 +71,10 @@ resetBtn.addEventListener('click', handlerReset);
     // # DEBUG
     console.log('Current grid:');
     console.log(currentGrid);
+    console.log(currentGrid.children.length + 'x' + currentGrid.children[0].children.length);
 
     // Append the grid to the grid container
     gridContainer.appendChild(currentGrid);
-    // Update the grid-dimension display
-    gridDimensionDisplay.textContent = numberOfRows + 'x' + numberOfColumns;
  }
 
 // Being called when the 'Reset' button is pressed and performs the following actions:
@@ -153,7 +150,7 @@ function createDiv() {
 // Helps to set values for all the grid-property variables
 function setGridProperties(numberOfSquares) {
     numberOfRows = numberOfColumns = numberOfSquares;
-    squareWidth = squareHeight = Math.floor(gridSideLength / numberOfSquares);
+    squareWidth = squareHeight = gridSideLength / numberOfSquares;
 }
 
 // Helps to generate a random integer from between
