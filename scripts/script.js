@@ -3,10 +3,6 @@ const gridSideLength = 960;
 const gridContainer = document.getElementById('grid-container');
 const resetBtn = document.getElementById('reset-btn');
 
-gridContainer.style.width = gridSideLength + 'px';
-gridContainer.style.height = gridSideLength + 'px';
-
-
 // Grid properties
 var currentGrid = null;
 var numberOfRows = 0;
@@ -18,6 +14,10 @@ var baseColor = '';
 var passCount = 0;
 var newR, newG, newB, currentR, currentG, currentB = 0;
 var shadeFactor = 0.1;
+
+// Set the grid size
+gridContainer.style.width = gridSideLength + 'px';
+gridContainer.style.height = gridSideLength + 'px';
 
 // Sets grid values for the variables above
 setGridProperties(31);
@@ -31,7 +31,7 @@ document.body.onload = () => {
 resetBtn.addEventListener('click', handlerReset);
 
 // The purpose of the function is to draw a grid
-// either when the page is loaded or when the user pressed the 'Reset' button
+// either when the page is loaded or after the user pressed the 'Reset' button
  function drawGrid() {
     // store the grid to be drawn in a variable because
     // whenever we'll need to erase the grid in the future,
@@ -67,11 +67,6 @@ resetBtn.addEventListener('click', handlerReset);
         // Append the row to the grid
         currentGrid.appendChild(row);
     }
-    
-    // # DEBUG
-    console.log('Current grid:');
-    console.log(currentGrid);
-    console.log(currentGrid.children.length + 'x' + currentGrid.children[0].children.length);
 
     // Append the grid to the grid container
     gridContainer.appendChild(currentGrid);
@@ -118,7 +113,7 @@ function handlerReset() {
 // it verifies how many passes there were, if the number of passes is more than 10,
 // it regenerates the base color and resets the passes counter,
 // then it sets the color's value based on the formula
-// base color(gets regenerated every 10 passes) + 10% of dark * number of passes
+// base color + 10% of dark * number of passes
 function handlerSquareHovered(targetSquare) {
     // Verify how many passes there were
     if (passCount > 10) {
