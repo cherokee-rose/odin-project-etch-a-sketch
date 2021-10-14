@@ -93,9 +93,6 @@ function handlerReset() {
     // Reset the grid properties
     setGridProperties(squaresPerSide);
 
-    // # DEBUG
-    console.log('Number of squares inputted: ' + squaresPerSide);
-
     // Draw a new grid
     drawGrid();
 }
